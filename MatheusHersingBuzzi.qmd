@@ -13,11 +13,8 @@ editor: visual
 library(tidyverse) # pacote ggplot2 (gráficos)
 library(WDI) # pacote dos dados
 library(gganimate) # Pacote para animações
----
-title: "Matheus Hersing Buzzi"
-format: html
-editor: visual
----
+library(gifski)  # necessário para animar o GIF
+
 
 # BASES DE DADOS
 # COLOCAR OS TRÊS OBJETOS DE DADOS
@@ -29,7 +26,7 @@ dadosvida <- WDI(country = 'all',
 # CORTE TRANSVERSAL
 dadosvida2023 <- WDI(country = 'all',
                      indicator = 'SP.DYN.CBRT.IN',
-                     start = 2023, end = 2023)
+                 start = 2023, end = 2023)
 
 # SÉRIE TEMPORAL
 dadosvidabr <- WDI(country = 'BR',
