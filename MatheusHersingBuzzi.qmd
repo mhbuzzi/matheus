@@ -1,0 +1,99 @@
+---
+title: "Matheus Hersing Buzzi"
+format: html
+editor: visual
+---
+
+------------------------------------------------------------------------
+
+```{r}
+#| label: load-packages # nomes únicos
+#| include: false # não inclui o resultado no doc
+
+library(tidyverse) # pacote ggplot2 (gráficos)
+library(WDI) # pacote dos dados
+library(gganimate) # Pacote para animações
+---
+title: "Matheus Hersing Buzzi"
+format: html
+editor: visual
+---
+
+# BASES DE DADOS
+# COLOCAR OS TRÊS OBJETOS DE DADOS
+
+# DADOS EM PAINEL
+dadosvida <- WDI(country = 'all',
+                 indicator = 'SP.DYN.CBRT.IN')
+
+# CORTE TRANSVERSAL
+dadosvida2023 <- WDI(country = 'all',
+                     indicator = 'SP.DYN.CBRT.IN',
+                     start = 2023, end = 2023)
+
+# SÉRIE TEMPORAL
+dadosvidabr <- WDI(country = 'BR',
+                   indicator = 'SP.DYN.CBRT.IN')
+```
+
+## VARIÁVEL
+
+A **Taxa de Natalidade** é uma variável demográfica que indica o número de nascimentos por mil habitantes em um determinado período. Essa medida reflete aspectos sociais, econômicos e culturais de uma população, como níveis de fertilidade, políticas públicas, condições de saúde materna e planejamento familiar. A taxa de natalidade é fundamental para entender a dinâmica populacional e o crescimento demográfico de um país ou região.
+
+## GRÁFICO COM DADOS EM PAINEL
+
+Um **gráfico com dados em painel** é utilizado para mostrar informações que representam duas ou mais dimensões ao longo de vários períodos de tempo. Esse modelo de gráfico possibilita visualizar o trajeto de diversos países, regiões ou estados em relação a uma determinada variável ao longo do tempo.
+
+O gráfico com dados em painel também torna mais disponível a comparação entre várias localidades, possibilitando a identificação de normas, como a manutenção de uma tendência de crescimento ou a paralisação em certas áreas.
+
+```{r}
+#| label: salvar-gif-painel
+#| warning: false
+#| message: false
+#| echo: false
+
+anim <- ggplot(dadosvida,
+       aes(x = year, y = SP.DYN.CBRT.IN)) +
+  geom_point() +
+  transition_time(year) +
+  labs(title = "Ano: {frame_time}")
+
+anim_save("grafico_painel.gif", animation = animate(anim, renderer = gifski_renderer()))
+```
+
+![](grafico_painel.gif)
+
+## GRÁFICO COM CORTE TRANSVERSAL
+
+Um **gráfico com dados de corte transversal** é utilizado para exibir informações de diferentes elementos (como países, estados ou regiões) em um único ponto no tempo.
+
+Esses gráficos possibilitam visualizar como diferentes unidades se comparam entre si quanto a uma variável em um determinado período, facilitando analisar desigualdades ou padrões de comportamento. Por exemplo, ao identificar a evolução da taxa de natalidade em 2023, podemos detectar quais países possuem taxas mais altas ou mais baixas naquele ano específico.
+
+```{r}
+#| label: dadoscortetransversal
+#| warning: false
+#| echo: false
+
+ggplot(dadosvida2023,
+       mapping = aes(x = country, y = SP.DYN.CBRT.IN)) +
+  geom_point() +
+  theme(axis.text.x = element_blank()) # oculta textos dos países se for muito poluído
+```
+
+## GRÁFICO COM SÉRIE TEMPORAL
+
+O **gráfico com dados de série temporal** serve para observar o progresso de somente uma variável durante os anos. Esse tipo de gráfico permite visualizar como uma variável muda no decorrer diferentes períodos, o que ajuda a identificar tendências, ciclos e variações sazonais. Por exemplo, ao trabalhar com a variável "Taxa de Natalidade", o gráfico de série temporal representa os dados específicos de um único país (Brasil, no caso) ao longo dos anos.
+
+Com a série temporal, pode-se visualizar a mudança da Taxa de Natalidade de forma progressiva, observando-se, por exemplo, anos de aumento ou redução, e associando essas variações com políticas públicas, mudanças socioeconômicas ou eventos históricos relevantes.
+
+```{r}
+#| label: dadosserietemporal
+#| warning: false
+#| echo: false
+
+ggplot(dadosvidabr,
+       mapping = aes(x = year, y = SP.DYN.CBRT.IN)) +
+  geom_point() +
+  geom_line() +
+  transition_reveal(year)
+```
