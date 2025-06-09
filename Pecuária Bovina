@@ -1,40 +1,44 @@
-# INSTALAR O PACOTE
+---
+title: "Pecuária Bovina"
+format: html
+editor: visual
+---
 
-install.packages("GetBCBData")
-install.packages("tidyverse")
-# CARREGAR A BIBLIOTECA
 
+{r}
+#| label: load-packages
+#| include: false
+
+# Carrega os pacotes necessários
+library(tidyverse)
 library(GetBCBData)
-library(tidyverse) # TAMBÉM É NECESSÁRIO
+library(gganimate)
+library(gifski)
+library(knitr)
 
-# INSTRUÇÕES DO PACOTE (VIGNETTE)
-#https://cran.r-project.org/web/packages/GetBCBData/vignettes/GetBCBData-vignette.html
+# Define ID da série e coleta os dados
+my.id <- c(Cattle = 1298)
 
-# OS CÓDIGOS DAS VARIÁVEIS VÊM DIRETO DA PLATAFORMA
-# ACESSAR O SGS
-# http://www.bcb.gov.br/?sgs
+df.bcb <- gbcbd_get_series(
+  id = my.id,
+  first.date = '1991-01-01',
+  last.date = Sys.Date(),
+  format.data = 'long',
+  use.memoise = TRUE,
+  cache.path = tempdir(),
+  do.parallel = FALSE
+)
 
-# EXEMPLO COM CDI
-# METADADOS
-# Taxa média de juros tendo como base as operações de emissão de Depósitos 
-# Interfinanceiros pré-fixados, pactuadas por um dia útil, registradas e 
-# liquidadas pelo sistema Cetip, considerando apenas operações do mercado 
-#interbancário realizadas entre instituições de conglomerados diferentes 
-# (Extra-grupo), desprezando-se as demais (Intra-Grupo).
 
-my.id <- c( Cattle= 1298)
+Desde 1991, a pecuária bovina brasileira cresceu de forma expressiva, impulsionada por avanços tecnológicos e aumento da demanda. Hoje, o país é um dos maiores produtores e exportadores de carne bovina do mundo.
 
-df.bcb <- gbcbd_get_series(id = my.id ,
-                           first.date = '1990-12-31',
-                           last.date = Sys.Date(),
-                           format.data = 'long',
-                           use.memoise = TRUE, 
-                           cache.path = tempdir(), # use tempdir for cache folder
-                           do.parallel = FALSE)
 
-glimpse(df.bcb)
 
-# GRÁFICO SIMPLES
+{r}
+#| label: grafico-animado
+#| warning: false
+#| message: false
+#| echo: false
 
 p <- ggplot(df.bcb, aes(x = ref.date, y = value) ) +
   geom_line() + 
@@ -43,4 +47,4 @@ p <- ggplot(df.bcb, aes(x = ref.date, y = value) ) +
        x = '', y = 'Cabeça de Boi') + 
   theme_light()
 
-print(p)
+p
